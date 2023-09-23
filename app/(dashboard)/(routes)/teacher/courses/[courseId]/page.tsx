@@ -9,6 +9,7 @@ import ImageForm from "./_components/image-form";
 import CategoryForm from "./_components/category-form";
 import PriceForm from "./_components/price-form";
 import AttachmentForm from "./_components/attachment-form";
+import ChaptersForm from "./_components/chapters-form";
 
 const CoursePage = async ({
   params
@@ -23,8 +24,13 @@ const CoursePage = async ({
   }
 
   const course = await db.course.findUnique({
-    where: {id: params.courseId},
+    where: {id: params.courseId, userId: userId},
     include: {
+      chapters: {
+        orderBy: {
+          position: 'asc'
+        }
+      },
       attachments: {
         orderBy: {
           createdAt: 'desc'
@@ -51,6 +57,7 @@ const CoursePage = async ({
     course.imageUrl,
     course.price,
     course.categoryId,
+    course.chapters.some(c => c.isPublished),
   ];
 
   const totalFields = requiredFields.length;
@@ -93,13 +100,10 @@ const CoursePage = async ({
               <h2 className="text-xl">Course Chapters</h2>
             </div>
             <div>
-              <p className="text-sm text-slate-700">
-                {/* TODO: Add the component to add chapters to a course */}
-                Add chapters to your course to organize your content.
-              </p>
+              <ChaptersForm initialData={course} courseId={course.id} />
             </div>
 
-            <div>
+            <div className="mt-6">
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={CircleDollarSignIcon} />
                 <h2 className="text-xl">Sell your course</h2>
