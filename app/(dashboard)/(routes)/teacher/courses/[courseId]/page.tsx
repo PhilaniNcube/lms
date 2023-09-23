@@ -1,12 +1,14 @@
 import { IconBadge } from "@/components/icon-badge";
 import {db} from "@/lib/db";
 import { auth } from "@clerk/nextjs";
-import { Layout } from "lucide-react";
+import { CircleDollarSignIcon, File, Layout, ListChecks } from "lucide-react";
 import { redirect } from "next/navigation";
 import TitleForm from "./_components/title-form";
 import DescriptionForm from "./_components/description-form";
 import ImageForm from "./_components/image-form";
 import CategoryForm from "./_components/category-form";
+import PriceForm from "./_components/price-form";
+import AttachmentForm from "./_components/attachment-form";
 
 const CoursePage = async ({
   params
@@ -21,7 +23,14 @@ const CoursePage = async ({
   }
 
   const course = await db.course.findUnique({
-    where: {id: params.courseId}
+    where: {id: params.courseId},
+    include: {
+      attachments: {
+        orderBy: {
+          createdAt: 'desc'
+        }
+      }
+    }
   })
 
   const categories = await db.category.findMany({
@@ -57,8 +66,8 @@ const CoursePage = async ({
           <span className="text-sm text-slate-700">{completionText}</span>
         </div>
       </div>
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
-        <div>
+      <article className="grid grid-cols-1 gap-6 mt-16 md:grid-cols-2">
+        <section>
           <div className="flex items-center gap-x-2">
             <IconBadge icon={Layout} />
             <h2 className="text-xl">Customize your course</h2>
@@ -66,14 +75,47 @@ const CoursePage = async ({
           <TitleForm initialData={course} courseId={course.id} />
           <DescriptionForm initialData={course} courseId={course.id} />
           <ImageForm initialData={course} courseId={course.id} />
-          <CategoryForm initialData={course} courseId={course.id} options={categories.map((item) => {
-            return {
-              label: item.name,
-              value: item.id
-            }
-          })} />
-        </div>
-      </section>
+          <CategoryForm
+            initialData={course}
+            courseId={course.id}
+            options={categories.map((item) => {
+              return {
+                label: item.name,
+                value: item.id,
+              };
+            })}
+          />
+        </section>
+        <section className="space-y-6">
+          <div>
+            <div className="flex items-center gap-x-2">
+              <IconBadge icon={ListChecks} />
+              <h2 className="text-xl">Course Chapters</h2>
+            </div>
+            <div>
+              <p className="text-sm text-slate-700">
+                {/* TODO: Add the component to add chapters to a course */}
+                Add chapters to your course to organize your content.
+              </p>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-x-2">
+                <IconBadge icon={CircleDollarSignIcon} />
+                <h2 className="text-xl">Sell your course</h2>
+              </div>
+              <PriceForm initialData={course} courseId={course.id} />
+            </div>
+            <div className="mt-6">
+              <div className="flex items-center gap-x-2">
+                <IconBadge icon={File} />
+                <h2 className="text-xl">Resources and Attachments</h2>
+              </div>
+              <AttachmentForm initialData={course} courseId={course.id} />
+            </div>
+          </div>
+        </section>
+      </article>
     </div>
   );
 };
