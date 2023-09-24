@@ -79,5 +79,9 @@ html, body, :root {
   }
 }
 
+.ql-container {
+  font-size: 1.2rem;
+}
+
 
 @import "~@uploadthing/react/styles.css"

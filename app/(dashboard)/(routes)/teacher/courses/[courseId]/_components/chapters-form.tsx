@@ -101,11 +101,15 @@ const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
     }
   }
 
+  const onEdit = (id:string) => {
+     router.push(`/teacher/courses/${courseId}/chapters/${id}`)
+  }
+
   return (
     <div className="relative p-4 mt-6 border rounded-md bg-slate-100">
       {isUpdating && (
         <div className="absolute inset-0 flex items-center justify-center rounded-md bg-slate-500/20">
-          <Loader2 className="w-6 h-6 animate-spin text-sly-700"/>
+          <Loader2 className="w-6 h-6 animate-spin text-sly-700" />
         </div>
       )}
       <div className="flex items-center justify-between font-medium">
@@ -169,7 +173,7 @@ const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
             <p>No Chapters</p>
           ) : (
             <ChaptersList
-              onEdit={() => {}}
+              onEdit={onEdit}
               onReorder={onReorder}
               items={initialData.chapters || []}
             />
