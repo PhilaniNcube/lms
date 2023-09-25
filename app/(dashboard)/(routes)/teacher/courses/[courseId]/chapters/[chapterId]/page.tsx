@@ -9,6 +9,8 @@ import ChapterTitleForm from "./_components/chapter-title-form";
 import ChapterDescriptionForm from "./_components/chapter-description-form";
 import ChapterAccessForm from "./_components/chapter-access-form";
 import VideoForm from "./_components/chapter-video-form";
+import { Banner } from "@/components/banner";
+import { ChapterActions } from "./_components/chapter-actions";
 
 const ChapterPage = async ({
   params
@@ -47,72 +49,92 @@ const ChapterPage = async ({
 
     const completionText = `${compltedFields}/${totalFields} fields completed`
 
+    const isComplete = requiredFields.every(Boolean)
+
   return (
-    <section className="p-6">
-      <div className="flex items-center justify-between">
-        <div className="w-full">
-          <Link
-            className="flex items-center text-sm transition mb-6 hover:opacity-75"
-            href={`/teacher/courses/${params.courseId}`}
-          >
-            <Button
-              type="button"
-              aria-label="Back to course set up"
-              variant="outline"
-              className="flex items-center"
+    <>
+      {!chapter.isPublished && (
+        <Banner
+          variant="warning"
+          label="This chapter is not yet published. It will not be visible in the course"
+        />
+      )}
+      <section className="p-6">
+        <div className="flex items-center justify-between">
+          <div className="w-full">
+            <Link
+              className="flex items-center text-sm transition mb-6 hover:opacity-75"
+              href={`/teacher/courses/${params.courseId}`}
             >
-              <ArrowLeft className="h-4 w-4 mr-3" />
-              Back to course set up
-            </Button>
-          </Link>
-          <div className="flex items-center justify-between w-full">
-            <div className="flex flex-col gap-y-2">
-              <h1 className="text-2xl font-medium">Chapter Creation</h1>
-              <span className="text-sm text-slate-700">{completionText}</span>
+              <Button
+                type="button"
+                aria-label="Back to course set up"
+                variant="outline"
+                className="flex items-center"
+              >
+                <ArrowLeft className="h-4 w-4 mr-3" />
+                Back to course set up
+              </Button>
+            </Link>
+            <div className="flex items-center justify-between w-full">
+              <div className="flex flex-col gap-y-2">
+                <h1 className="text-2xl font-medium">Chapter Creation</h1>
+                <span className="text-sm text-slate-700">{completionText}</span>
+              </div>
+              <ChapterActions
+                disabled={!isComplete}
+                courseId={params.courseId}
+                chapterId={params.chapterId}
+                isPublished={chapter.isPublished}
+              />
             </div>
           </div>
         </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
-        <div className="space-y-4">
-          <div>
-            <div className="flex items-center gap-x-2">
-              <IconBadge icon={LayoutDashboard} />
-              <h2 className="text-xl">Customise your chapter</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
+          <div className="space-y-4">
+            <div>
+              <div className="flex items-center gap-x-2">
+                <IconBadge icon={LayoutDashboard} />
+                <h2 className="text-xl">Customise your chapter</h2>
+              </div>
+              {/* TODO: Chapter Titlte Form */}
+              <ChapterTitleForm
+                initialData={chapter}
+                courseId={params.courseId}
+                chapterId={params.chapterId}
+              />
+              <ChapterDescriptionForm
+                initialData={chapter}
+                courseId={params.courseId}
+                chapterId={params.chapterId}
+              />
             </div>
-            {/* TODO: Chapter Titlte Form */}
-            <ChapterTitleForm
-              initialData={chapter}
-              courseId={params.courseId}
-              chapterId={params.chapterId}
-            />
-            <ChapterDescriptionForm
-              initialData={chapter}
-              courseId={params.courseId}
-              chapterId={params.chapterId}
-            />
+            <div>
+              <div className="flex items-center gap-x-2">
+                <IconBadge icon={Eye} />
+                <h2 className="text-xl">Access Settings</h2>
+              </div>{" "}
+              <ChapterAccessForm
+                initialData={chapter}
+                courseId={params.courseId}
+                chapterId={params.chapterId}
+              />
+            </div>
           </div>
           <div>
             <div className="flex items-center gap-x-2">
-              <IconBadge icon={Eye} />
-              <h2 className="text-xl">Access Settings</h2>
-            </div>{" "}
-            <ChapterAccessForm
+              <IconBadge icon={Video} />
+              <h2 className="text-xl">Add a video</h2>
+            </div>
+            <VideoForm
               initialData={chapter}
               courseId={params.courseId}
               chapterId={params.chapterId}
             />
           </div>
         </div>
-        <div>
-          <div className="flex items-center gap-x-2">
-            <IconBadge icon={Video} />
-            <h2 className="text-xl">Add a video</h2>
-          </div>
-          <VideoForm initialData={chapter} courseId={params.courseId} chapterId={params.chapterId} />
-        </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 export default ChapterPage;

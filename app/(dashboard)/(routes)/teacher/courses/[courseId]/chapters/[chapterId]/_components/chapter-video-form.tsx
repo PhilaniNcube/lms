@@ -5,15 +5,14 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
-
 import { toast } from "@/components/ui/use-toast";
 import {  Pencil, PlusCircle, Video } from "lucide-react";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { Chapter, MuxData } from "@prisma/client";
-import Image from "next/image";
 import FileUpload from "@/components/file-upload";
+import MuxPlayer from "@mux/mux-player-react";
 
 interface VideoFormProps {
   initialData: Chapter & {muxData?: MuxData | null};
@@ -85,7 +84,7 @@ const VideoForm = ({ initialData, courseId, chapterId }: VideoFormProps) => {
           </div>
         ) : (
           <div className="relative aspect-video mt-2">
-        Video Uploaded
+             <MuxPlayer playbackId={initialData?.muxData?.playbackId || ""} />
           </div>
         ))}
 
